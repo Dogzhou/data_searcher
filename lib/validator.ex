@@ -1,15 +1,7 @@
 defmodule DataSearcher.Validator do
-  alias DataSearcher.Repo.User
+  alias DataSearcher.Repo.{User, Ticket, Organization}
 
-  defmacro valid_menu?(menu) do
-    quote do
-      unquote(menu) in ~w(1 2 3 4)
-    end
-  end
-
-  defmacro valid_term?(menu, term) do
-    quote do
-      unquote(term) in unquote(User.fields)
-    end
-  end
+  def valid_term?("User", term), do: term in User.fields()
+  def valid_term?("Ticket", term), do: term in Ticket.fields()
+  def valid_term?("Organization", term), do: term in Organization.fields()
 end

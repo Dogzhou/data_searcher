@@ -1,6 +1,6 @@
 defmodule Console do
-  import DataSearcher.Validator
   alias DataSearcher.{Repo, Utils}
+  alias DataSearcher.Validator
 
   @main_menu_msg """
   Main menu
@@ -41,26 +41,33 @@ defmodule Console do
     {menu, term, value}
   end
 
-  def process_menu("4") do
-    Utils.print("list available fields")
+  defp process_menu("4") do
+    Repo.list_available_fields()
 
     get_menu_selection() |> process_menu()
   end
 
-  def process_menu("quit"), do: System.halt()
-  def process_menu(menu_index) when valid_menu?(menu_index), do: Map.get(@menu_map, menu_index)
+  defp process_menu("quit"), do: System.halt()
+  defp process_menu(menu_index) when menu_index in ~w(1 2 3 4), do: Map.get(@menu_map, menu_index)
 
-  def process_menu(_) do
-    Utils.print("wrong selection, please select again")
+  defp process_menu(_) do
+    Utils.print("Invalid selection, please input again")
 
     get_menu_selection() |> process_menu()
   end
 
-  def process_term("quit"), do: System.halt()
-  def process_term({menu, term}) when valid_term?(menu, term), do: {menu, term}
+  defp process_term("quit"), do: System.halt()
 
-  def process_term({menu, _term}) do
-    Utils.print("wrong selection, please select again")
+  defp process_term({menu, term}) do
+    case Validator.valid_term?(menu,  term) do
+      true -> {menu, term}
+      false -> redo_process_term({menu, term})
+    end
+  end
+
+  defp redo_process_term({menu, _term}) do
+    Utils.print("the term you input does not exist for " <> menu)
+
     get_term_input(menu) |> process_term()
   end
 end
