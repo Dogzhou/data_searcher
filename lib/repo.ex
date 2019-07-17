@@ -15,7 +15,7 @@ defmodule DataSearcher.Repo do
     |> Enum.join()
   end
 
-  def search(params) do
-    IO.inspect(params)
-  end
+  def search("User", term, value), do: User.find_by(term: value)
+  def search("Ticket", term, value), do: Ticket.find_by(term: value)
+  def search("Organization", term, value), do: Organization.find_by(term: value)
 end
