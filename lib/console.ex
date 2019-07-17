@@ -1,6 +1,6 @@
 defmodule Console do
   import DataSearcher.Validator
-  alias DataSearcher.Repo
+  alias DataSearcher.{Repo, Utils}
 
   @main_menu_msg """
   Main menu
@@ -15,58 +15,52 @@ defmodule Console do
 
   def run do
     get_menu_selection()
-    |> receive_menu()
+    |> process_menu()
     |> get_term_input()
-    |> receive_term()
+    |> process_term()
     |> get_value_input()
     |> Repo.search()
   end
 
   defp get_menu_selection() do
-    @main_menu_msg |> get_input_with()
+    @main_menu_msg |> Utils.get_input_with()
   end
 
   defp get_term_input(menu) do
     term =
       menu
       |> Kernel.<>(@term_search_msg)
-      |> get_input_with()
+      |> Utils.get_input_with()
 
     {menu, term}
   end
 
   defp get_value_input({menu, term}) do
-    value = "Enter search value: " |> get_input_with()
+    value = "Enter search value: " |> Utils.get_input_with()
 
     {menu, term, value}
   end
 
-  def receive_menu("4") do
-    put_str("list available fields")
-    get_menu_selection()
+  def process_menu("4") do
+    Utils.print("list available fields")
+
+    get_menu_selection() |> process_menu()
   end
 
-  def receive_menu(menu_index) when valid_menu?(menu_index), do: Map.get(@menu_map, menu_index)
+  def process_menu("quit"), do: System.halt()
+  def process_menu(menu_index) when valid_menu?(menu_index), do: Map.get(@menu_map, menu_index)
 
-  def receive_menu(_) do
-    put_str("wrong selection, please select again")
-    get_menu_selection() |> receive_menu()
+  def process_menu(_) do
+    Utils.print("wrong selection, please select again")
+
+    get_menu_selection() |> process_menu()
   end
 
-  def receive_term({menu, term}) when valid_term?(menu, term), do: {menu, term}
+  def process_term("quit"), do: System.halt()
+  def process_term({menu, term}) when valid_term?(menu, term), do: {menu, term}
 
-  def receive_term({menu, _term}) do
-    put_str("wrong selection, please select again")
-    get_term_input(menu) |> receive_term()
-  end
-
-  defp get_input_with(message) do
-    message
-    |> IO.gets()
-    |> String.trim()
-  end
-
-  defp put_str(str) do
-    IO.puts(str)
+  def process_term({menu, _term}) do
+    Utils.print("wrong selection, please select again")
+    get_term_input(menu) |> process_term()
   end
 end
