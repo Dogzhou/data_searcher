@@ -8,7 +8,6 @@ defmodule DataSearcher.Repo.User do
   def find_by(term, value) when term in @indexed_fields do
     term
     |> Kernel.<>("_user")
-    |> IO.inspect()
     |> String.to_atom()
     |> Agent.get(& &1)
     |> Map.get(value)
@@ -17,18 +16,5 @@ defmodule DataSearcher.Repo.User do
 
   def find_by(term, value) do
     IO.puts("no index search")
-  end
-
-  defp all do
-    Agent.get(:users, & &1)
-  end
-
-  def index_on do
-    @indexed_fields
-    |> Enum.each(fn index_field ->
-      indexed_result = all() |> Enum.into(%{}, fn user -> {user[index_field], user} end)
-      index_name = String.to_atom(index_field <> "_user")
-      Agent.start_link(fn -> indexed_result end, name: index_name)
-    end)
   end
 end

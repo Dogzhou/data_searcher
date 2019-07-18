@@ -7,6 +7,6 @@ load_orgnizations()
 load_users()
 load_tickets()
 
-DataSearcher.Repo.User.index_on()
+create_index()
 
 Console.run()
