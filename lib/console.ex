@@ -29,6 +29,7 @@ defmodule Console do
   defp get_term_input(menu) do
     term =
       menu
+      |> Atom.to_string()
       |> Kernel.<>(@term_search_msg)
       |> Utils.get_input_with()
 
@@ -48,7 +49,9 @@ defmodule Console do
   end
 
   defp process_menu("quit"), do: System.halt()
-  defp process_menu(menu_index) when menu_index in ~w(1 2 3 4), do: Map.get(@menu_map, menu_index)
+
+  defp process_menu(menu_index) when menu_index in ~w(1 2 3 4),
+    do: Map.get(@menu_map, menu_index) |> String.to_atom()
 
   defp process_menu(_) do
     Utils.print("Invalid selection, please input again")
@@ -59,14 +62,14 @@ defmodule Console do
   defp process_term("quit"), do: System.halt()
 
   defp process_term({menu, term}) do
-    case Validator.valid_term?(menu,  term) do
+    case Validator.valid_term?(menu, term) do
       true -> {menu, term}
       false -> redo_process_term({menu, term})
     end
   end
 
   defp redo_process_term({menu, _term}) do
-    Utils.print("the term you input does not exist for " <> menu)
+    Utils.print("the term you input does not exist for " <> (menu |> Atom.to_string()))
 
     get_term_input(menu) |> process_term()
   end
