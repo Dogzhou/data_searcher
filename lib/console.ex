@@ -45,18 +45,17 @@ defmodule Console do
   defp process_menu("4") do
     Repo.list_available_fields()
 
-    get_menu_selection() |> process_menu()
+    redo_process_menu()
   end
 
   defp process_menu("quit"), do: System.halt()
-
   defp process_menu(menu_index) when menu_index in ~w(1 2 3 4),
     do: Map.get(@menu_map, menu_index) |> String.to_atom()
 
   defp process_menu(_) do
     Utils.print("Invalid selection, please input again")
 
-    get_menu_selection() |> process_menu()
+    redo_process_menu()
   end
 
   defp process_term("quit"), do: System.halt()
@@ -66,6 +65,10 @@ defmodule Console do
       true -> {menu, term}
       false -> redo_process_term({menu, term})
     end
+  end
+
+  defp redo_process_menu do
+    get_menu_selection() |> process_menu()
   end
 
   defp redo_process_term({menu, _term}) do

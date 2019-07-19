@@ -16,4 +16,10 @@ defmodule DataSearcher.Utils do
   def indent_str(str, indent \\ 2) do
     String.duplicate(" ", indent) <> str
   end
+
+  def get_date(string) do
+    string
+    |> String.split("T")
+    |> hd()
+  end
 end
