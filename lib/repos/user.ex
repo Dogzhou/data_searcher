@@ -1,6 +1,6 @@
 defmodule DataSearcher.Repo.User do
-  alias DataSearcher.Utils
-  DataSearcher.Repo
+  alias DataSearcher.{Utils, Repo}
+  alias DataSearcher.Repo.{Organization, Ticket}
 
   @indexed_fields ~w(_id name organization_id external_id)
   @boolean_type_fields ~w(active shared verified suspended)
@@ -16,35 +16,48 @@ defmodule DataSearcher.Repo.User do
     term
     |> get_indexed_data()
     |> Map.get(value)
-    |> resolve_organization()
     |> IO.inspect()
   end
 
   def find_by(term, value) when term in @array_type_fields do
     all()
     |> Enum.filter(& value in &1[term])
-    |> resolve_organization()
     |> IO.inspect()
   end
 
   def find_by(term, value) when term in @timestamp_type_fields do
     all()
     |> Enum.filter(& Utils.get_date(&1[term]) == value)
-    |> resolve_organization()
     |> IO.inspect()
   end
 
   def find_by(term, value) do
     all()
     |> Enum.filter(& to_string(&1) == value)
-    |> resolve_organization()
     |> IO.inspect()
   end
 
-  defp resolve_organization(users) do
+  def resolve_organization(users) do
     users
     |> Enum.map(fn user ->
-      Map.update(user, "organization", %{}, &Organization.find_by("_id", &1["organization_id"]))
+      organization = Organization.find_by("_id", user["organization_id"])
+      Map.put(user, "organization", organization)
+    end)
+  end
+
+  def resolve_submitted_tickets(users) do
+    users
+    |> Enum.map(fn user ->
+      submitted_tickets = Ticket.find_by("submitter_id", user["_id"])
+      Map.put(user, "submitted_tickets", submitted_tickets)
+    end)
+  end
+
+  def resolve_assigned_tickets(users) do
+    users
+    |> Enum.map(fn user ->
+      assigned_tickets = Ticket.find_by("assignee_id", user["_id"])
+      Map.put(user, "assigned_tickets", assigned_tickets)
     end)
   end
 

@@ -20,7 +20,7 @@ defmodule DataSearcher.Repo do
     |> Enum.join()
   end
 
-  def search({:User, term, value}), do: User.find_by(term, value)
+  def search({:User, term, value}), do: User.find_by(term, value) |> User.resolve_organization()# |> User.resolve_submitted_tickets() |> User.resolve_assigned_tickets()
   def search({:Ticket, term, value}), do: Ticket.find_by(term, value)
   def search({:Organization, term, value}), do: Organization.find_by(term, value)
 

@@ -20,6 +20,7 @@ defmodule Console do
     |> process_term()
     |> get_value_input()
     |> Repo.search()
+    |> IO.inspect()
   end
 
   defp get_menu_selection() do

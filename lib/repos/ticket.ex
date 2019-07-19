@@ -1,16 +1,43 @@
 defmodule DataSearcher.Repo.Ticket do
-  @indexed_fields ~w(_id submitter_id assignee_id organization_id)
-  @fields ~w(_id url external_id created_at type subject description priority status submitter_id assignee_id organization_id tags has_incidents due_at via)
+  @indexed_fields ~w(_id submitter_id assignee_id organization_id type external_id)
+  @boolean_type_fields ~w(has_incidents)
+  @array_type_fields ~w(tags)
+  @timestamp_type_fields ~w(due_at)
+  @string_type_fields ~w(url subject description priority status via)
 
-  def fields, do: @fields
-  def indexed_fields, do: @indexed_fields
+  def fields, do: @indexed_fields ++ @boolean_type_fields ++ @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
 
-  # def create_index do
-  #   @indexed_fields
-  #   |> Enum.each(fn index_field ->
-  #     indexed_data = all() |> Enum.reduce(%{}, fn user, acc -> Map.update(acc, "#{user[index_field]}", [user], & &1 ++ [user]) end)
-  #       index_name = String.to_atom(index_field <> "_user")
-  #     Agent.start_link(fn -> indexed_data end, name: index_name)
-  #   end)
-  # end
+  def all, do: Agent.get(:tickets, & &1)
+
+  def find_by(term, value) when term in @indexed_fields do
+    term
+    |> get_indexed_data()
+    |> Map.get(value)
+    |> IO.inspect()
+  end
+
+  def find_by(term, value) when term in @array_type_fields do
+    all()
+    |> Enum.filter(& value in &1[term])
+    |> IO.inspect()
+  end
+
+  def find_by(term, value) when term in @timestamp_type_fields do
+    all()
+    |> Enum.filter(& Utils.get_date(&1[term]) == value)
+    |> IO.inspect()
+  end
+
+  def find_by(term, value) do
+    all()
+    |> Enum.filter(& to_string(&1) == value)
+    |> IO.inspect()
+  end
+
+  defp get_indexed_data(term) do
+    term
+    |> Kernel.<>("_organization")
+    |> String.to_atom()
+    |> Agent.get(& &1)
+  end
 end
