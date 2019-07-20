@@ -20,7 +20,17 @@ defmodule DataSearcher.Repo.Ticket do
   def find_by(term, value) when term in @timestamp_type_fields, do: all() |> Enum.filter(& Utils.get_date(&1[term]) == value)
   def find_by(term, value), do: all() |> Enum.filter(& to_string(&1) == value)
 
-  def resolve_submitter(tickets) do
+  def resolve_associated_resources([]), do: []
+  def resolve_associated_resources(nil), do: []
+
+  def resolve_associated_resources(tickets) do
+    tickets
+    |> resolve_submitter()
+    |> resolve_assignee()
+    |> resolve_organization()
+  end
+
+  defp resolve_submitter(tickets) do
     tickets
     |> Enum.map(fn ticket ->
       submitter = User.find_by("_id", ticket["submitter_id"])
@@ -28,7 +38,7 @@ defmodule DataSearcher.Repo.Ticket do
     end)
   end
 
-  def resolve_assignee(tickets) do
+  defp resolve_assignee(tickets) do
     tickets
     |> Enum.map(fn ticket ->
       assignee = User.find_by("_id", ticket["assignee_id"])
@@ -36,7 +46,7 @@ defmodule DataSearcher.Repo.Ticket do
     end)
   end
 
-  def resolve_organization(tickets) do
+  defp resolve_organization(tickets) do
     tickets
     |> Enum.map(fn ticket ->
       organization = Organization.find_by("_id", ticket["organization_id"])

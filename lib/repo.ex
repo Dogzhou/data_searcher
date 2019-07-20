@@ -8,19 +8,15 @@ defmodule DataSearcher.Repo do
   def search({:User, term, value}) do
     users = term
             |> User.find_by(value)
-            |> User.resolve_organization()
-            |> User.resolve_submitted_tickets()
-            |> User.resolve_assigned_tickets()
+            |> User.resolve_associated_resources()
 
     {:User, users}
   end
 
   def search({:Ticket, term, value}) do
     tickets = term
-              |> Ticket.find_by(term)
-              |> Ticket.resolve_submitter()
-              |> Ticket.resolve_assignee()
-              |> Ticket.resolve_organization()
+              |> Ticket.find_by(value)
+              |> Ticket.resolve_associated_resources()
 
     {:Ticket, tickets}
   end
@@ -28,8 +24,7 @@ defmodule DataSearcher.Repo do
   def search({:Organization, term, value}) do
     organizations = term
                     |> Organization.find_by(value)
-                    |> Organization.resolve_tickets()
-                    |> Organization.resolve_users()
+                    |> Organization.resolve_associated_resources()
 
     {:Organization, organizations}
   end

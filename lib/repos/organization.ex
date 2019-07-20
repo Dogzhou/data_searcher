@@ -22,7 +22,16 @@ defmodule DataSearcher.Repo.Organization do
   def find_by(term, value) when term in @timestamp_type_fields, do: all() |> Enum.filter(& Utils.get_date(&1[term]) == value)
   def find_by(term, value), do: all() |> Enum.filter(& to_string(&1) == value)
 
-  def resolve_users(organizations) do
+  def resolve_associated_resources([]), do: []
+  def resolve_associated_resources(nil), do: []
+
+  def resolve_associated_resources(organizations) do
+    organizations
+    |> resolve_tickets()
+    |> resolve_users()
+  end
+
+  defp resolve_users(organizations) do
     organizations
     |> Enum.map(fn org ->
       users = User.find_by("organization_id", org["_id"])
@@ -30,7 +39,7 @@ defmodule DataSearcher.Repo.Organization do
     end)
   end
 
-  def resolve_tickets(organizations) do
+  defp resolve_tickets(organizations) do
     organizations
     |> Enum.map(fn org ->
       tickets = Ticket.find_by("organization_id", org["_id"])

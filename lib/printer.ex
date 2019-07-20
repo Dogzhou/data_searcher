@@ -14,6 +14,7 @@ defmodule DataSearcher.Printer do
     |> Utils.print()
   end
 
+  def print({_, []}), do: Utils.print("No result was found, Please search again\n")
   def print({:User, users}), do: print_users(users)
   def print({:Ticket, tickets}), do: print_tickets(tickets)
   def print({:Organization, organizations}), do: print_organizations(organizations)
