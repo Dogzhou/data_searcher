@@ -19,7 +19,7 @@ defmodule Console do
     |> process_term()
     |> get_value_input()
     |> Repo.search()
-    |> Printer.print_users()
+    |> Printer.print()
 
     run() # Make run function repeats
   end

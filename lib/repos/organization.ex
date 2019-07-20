@@ -1,6 +1,6 @@
 defmodule DataSearcher.Repo.Organization do
   alias DataSearcher.Utils
-  alias DataSearcher.Repo.{Organization, Ticket}
+  alias DataSearcher.Repo.{Organization, Ticket, User}
 
   @indexed_fields ~w(_id external_id name)
   @boolean_type_fields ~w(shared_tickets)

@@ -14,6 +14,10 @@ defmodule DataSearcher.Printer do
     |> Utils.print()
   end
 
+  def print({:User, users}), do: print_users(users)
+  def print({:Ticket, tickets}), do: print_tickets(tickets)
+  def print({:Organization, organizations}), do: print_organizations(organizations)
+
   def print_users(users) do
     users
     |> Enum.map(&format_user(&1))
@@ -32,8 +36,8 @@ defmodule DataSearcher.Printer do
     ] |> Enum.join("\n")
   end
 
-  defp organization_printable_format(user) do
-    "Organization: " <> (user["organization"] |> hd() |> Map.get("name"))
+  defp organization_printable_format(map) do
+    "Organization: " <> (map["organization"] |> hd() |> Map.get("name"))
   end
 
   defp submitted_tickets_printable_format(user) do
@@ -47,6 +51,80 @@ defmodule DataSearcher.Printer do
   defp user_self_printable_format(user) do
     user
     |> Map.drop(Map.keys(user) -- User.fields())
+    |> Enum.map_join("\n", fn {field, value} ->
+      case field do
+        "tags" -> String.pad_leading(field <> ": ", 30) <> Utils.wrap_str(value |> Enum.join(", "), "[]")
+        _ -> String.pad_leading(field <> ": ", 30) <> to_string(value)
+      end
+    end)
+  end
+
+  def print_organizations(organizations) do
+    organizations
+    |> Enum.map(&format_organization(&1))
+    |> Enum.join()
+    |> Utils.print
+  end
+
+  defp format_organization(organization) do
+    [
+      Utils.split_line(),
+      users_printable_format(organization),
+      tickets_printable_format(organization),
+      organization_self_printable_format(organization),
+      Utils.split_line()
+    ] |> Enum.join("\n")
+  end
+
+  defp users_printable_format(organization) do
+    "Users: \n" <> (organization["users"] |> Enum.map_join("\n", & &1["name"] |> Utils.indent_str(4)))
+  end
+
+  defp tickets_printable_format(organization) do
+    "Tickets: \n" <> (organization["tickets"] |> Enum.map_join("\n", & &1["subject"] |> Utils.indent_str(4)))
+  end
+
+  defp organization_self_printable_format(organization) do
+    organization
+    |> Map.drop(Map.keys(organization) -- Organization.fields())
+    |> Enum.map_join("\n", fn {field, value} ->
+      case field do
+        "tags" -> String.pad_leading(field <> ": ", 30) <> Utils.wrap_str(value |> Enum.join(", "), "[]")
+        "domain_names" -> String.pad_leading(field <> ": ", 30) <> Utils.wrap_str(value |> Enum.join(", "), "[]")
+        _ -> String.pad_leading(field <> ": ", 30) <> to_string(value)
+      end
+    end)
+  end
+
+  def print_tickets(tickets) do
+    tickets
+    |> Enum.map(&format_ticket(&1))
+    |> Enum.join()
+    |> Utils.print
+  end
+
+  defp format_ticket(ticket) do
+    [
+      Utils.split_line(),
+      organization_printable_format(ticket),
+      submit_users_printable_format(ticket),
+      assigned_user_printable_format(ticket),
+      ticket_self_printable_format(ticket),
+      Utils.split_line()
+    ] |> Enum.join("\n")
+  end
+
+  def submit_users_printable_format(ticket) do
+    "Submitted By: " <> (ticket["submitter"] |> hd() |> Map.get("name"))
+  end
+
+  def assigned_user_printable_format(ticket) do
+    "Assigned To: " <> (ticket["assignee"] |> hd() |> Map.get("name"))
+  end
+
+  def ticket_self_printable_format(ticket) do
+    ticket
+    |> Map.drop(Map.keys(ticket) -- Ticket.fields())
     |> Enum.map_join("\n", fn {field, value} ->
       case field do
         "tags" -> String.pad_leading(field <> ": ", 30) <> Utils.wrap_str(value |> Enum.join(", "), "[]")
