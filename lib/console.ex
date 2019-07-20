@@ -21,6 +21,8 @@ defmodule Console do
     |> get_value_input()
     |> Repo.search()
     |> IO.inspect()
+
+    run() # Make run function repeats
   end
 
   defp get_menu_selection() do

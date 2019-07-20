@@ -15,27 +15,12 @@ defmodule DataSearcher.Repo.User do
   def find_by(term, value) when term in @indexed_fields do
     term
     |> get_indexed_data()
-    |> Map.get(value)
-    |> IO.inspect()
+    |> Map.get(to_string(value))
   end
 
-  def find_by(term, value) when term in @array_type_fields do
-    all()
-    |> Enum.filter(& value in &1[term])
-    |> IO.inspect()
-  end
-
-  def find_by(term, value) when term in @timestamp_type_fields do
-    all()
-    |> Enum.filter(& Utils.get_date(&1[term]) == value)
-    |> IO.inspect()
-  end
-
-  def find_by(term, value) do
-    all()
-    |> Enum.filter(& to_string(&1) == value)
-    |> IO.inspect()
-  end
+  def find_by(term, value) when term in @array_type_fields, do: all() |> Enum.filter(& value in &1[term])
+  def find_by(term, value) when term in @timestamp_type_fields, do: all() |> Enum.filter(& Utils.get_date(&1[term]) == value)
+  def find_by(term, value), do: all() |> Enum.filter(& to_string(&1) == value)
 
   def resolve_organization(users) do
     users
