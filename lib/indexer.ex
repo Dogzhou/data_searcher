@@ -1,4 +1,8 @@
 defmodule DataSearcher.Indexer do
+  @moduledoc """
+  Create index for all entities(User, Organization, Ticket) with their index field
+  """
+
   @index_fields_map %{
     "user" => ~w(_id name organization_id),
     "ticket" => ~w(_id submitter_id assignee_id organization_id),
@@ -22,14 +26,22 @@ defmodule DataSearcher.Indexer do
   def create_index do
     @index_fields_map
     |> Enum.each(fn {entity_name, indexed_fields} ->
-      Enum.each(indexed_fields, fn indexed_field ->
-        indexed_data = entity_name
-                       |> Repo.all()
-                       |> Enum.reduce(%{}, fn entity, acc -> Map.update(acc, "#{entity[indexed_field]}", [entity], & &1 ++ [entity]) end)
-        index_name = String.to_atom(indexed_field <> "_" <> entity_name)
+      create_index_by_fields(entity_name, indexed_fields)
+    end)
+  end
 
-        Agent.start_link(fn -> indexed_data end, name: index_name)
-      end)
+  defp create_index_by_fields(entity_name, fields) do
+    Enum.each(fields, fn indexed_field ->
+      indexed_data =
+        entity_name
+        |> Repo.all()
+        |> Enum.reduce(%{}, fn entity, acc ->
+          Map.update(acc, "#{entity[indexed_field]}", [entity], &(&1 ++ [entity]))
+        end)
+
+      index_name = String.to_atom(indexed_field <> "_" <> entity_name)
+
+      Agent.start_link(fn -> indexed_data end, name: index_name)
     end)
   end
 end

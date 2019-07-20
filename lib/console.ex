@@ -1,4 +1,7 @@
 defmodule Console do
+  @moduledoc """
+  Program main function
+  """
   alias DataSearcher.{Repo, Utils, Printer}
 
   @main_menu_msg """
@@ -21,7 +24,8 @@ defmodule Console do
     |> Repo.search()
     |> Printer.print()
 
-    run() # Make run function repeats
+    # Make run function repeats
+    run()
   end
 
   defp get_menu_selection() do
@@ -51,8 +55,9 @@ defmodule Console do
   end
 
   defp process_menu("quit"), do: System.halt()
+
   defp process_menu(menu_index) when menu_index in ~w(1 2 3 4),
-    do: Map.get(@menu_map, menu_index) |> String.to_atom()
+    do: @menu_map |> Map.get(menu_index) |> String.to_atom()
 
   defp process_menu(_) do
     Utils.print("Invalid selection, please input again")
@@ -76,6 +81,6 @@ defmodule Console do
   defp redo_process_term({menu, _term}) do
     Utils.print("the term you input does not exist for " <> to_string(menu))
 
-    get_term_input(menu) |> process_term()
+    menu |> get_term_input() |> process_term()
   end
 end

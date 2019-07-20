@@ -1,4 +1,8 @@
 defmodule DataSearcher.DataLoader do
+  @moduledoc """
+  load data from json files
+  """
+
   def load_orgnizations do
     with {:ok, body} <- File.read("lib/data/organizations.json"),
          {:ok, organizations} <- Poison.decode(body) do

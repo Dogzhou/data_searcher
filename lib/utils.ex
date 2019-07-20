@@ -1,4 +1,6 @@
 defmodule DataSearcher.Utils do
+  @moduledoc false
+
   def get_input_with(message) do
     message
     |> IO.gets()

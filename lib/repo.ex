@@ -1,30 +1,36 @@
 defmodule DataSearcher.Repo do
+  @moduledoc """
+  as a data search center, provide data related function expecially fetch data
+  """
   alias DataSearcher.Repo.{Organization, Ticket, User}
 
   def get_available_fields do
-    %{user: User.fields(), organization: Organization.fields, ticket: Ticket.fields()}
+    %{user: User.fields(), organization: Organization.fields(), ticket: Ticket.fields()}
   end
 
   def search({:User, term, value}) do
-    users = term
-            |> User.find_by(value)
-            |> User.resolve_associated_resources()
+    users =
+      term
+      |> User.find_by(value)
+      |> User.resolve_associated_resources()
 
     {:User, users}
   end
 
   def search({:Ticket, term, value}) do
-    tickets = term
-              |> Ticket.find_by(value)
-              |> Ticket.resolve_associated_resources()
+    tickets =
+      term
+      |> Ticket.find_by(value)
+      |> Ticket.resolve_associated_resources()
 
     {:Ticket, tickets}
   end
 
   def search({:Organization, term, value}) do
-    organizations = term
-                    |> Organization.find_by(value)
-                    |> Organization.resolve_associated_resources()
+    organizations =
+      term
+      |> Organization.find_by(value)
+      |> Organization.resolve_associated_resources()
 
     {:Organization, organizations}
   end
