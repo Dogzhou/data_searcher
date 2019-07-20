@@ -9,11 +9,7 @@ defmodule DataSearcher.Repo.User do
   @timestamp_type_fields ~w(created_at last_login_at)
   @string_type_fields ~w(url alias locale timezone email phone signature role)
 
-  def fields,
-    do:
-      @indexed_fields ++
-        @boolean_type_fields ++
-        @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
+  def fields, do: @indexed_fields ++ @boolean_type_fields ++ @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
 
   def all, do: Agent.get(:users, & &1)
 

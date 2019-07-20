@@ -2,18 +2,13 @@ defmodule DataSearcher.Repo.Organization do
   @moduledoc false
   alias DataSearcher.Utils
   alias DataSearcher.Repo.{Ticket, User}
-
   @indexed_fields ~w(_id external_id name)
   @boolean_type_fields ~w(shared_tickets)
   @array_type_fields ~w(domain_names tags)
   @timestamp_type_fields ~w(created_at )
   @string_type_fields ~w(url details)
 
-  def fields,
-    do:
-      @indexed_fields ++
-        @boolean_type_fields ++
-        @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
+  def fields, do: @indexed_fields ++ @boolean_type_fields ++ @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
 
   def all, do: Agent.get(:organizations, & &1)
 

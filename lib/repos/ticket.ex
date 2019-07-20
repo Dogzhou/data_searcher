@@ -8,11 +8,7 @@ defmodule DataSearcher.Repo.Ticket do
   @timestamp_type_fields ~w(due_at)
   @string_type_fields ~w(url subject description priority status via)
 
-  def fields,
-    do:
-      @indexed_fields ++
-        @boolean_type_fields ++
-        @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
+  def fields, do: @indexed_fields ++ @boolean_type_fields ++ @array_type_fields ++ @timestamp_type_fields ++ @string_type_fields
 
   def all, do: Agent.get(:tickets, & &1)
 
