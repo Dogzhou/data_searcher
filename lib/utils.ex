@@ -17,6 +17,10 @@ defmodule DataSearcher.Utils do
     String.duplicate(" ", indent) <> str
   end
 
+  def wrap_str(str, wrapper \\ "()") do
+    String.first(wrapper) <> str <> String.last(wrapper)
+  end
+
   def get_date(string) do
     string
     |> String.split("T")

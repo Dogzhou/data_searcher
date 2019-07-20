@@ -1,6 +1,5 @@
 defmodule Console do
-  alias DataSearcher.{Repo, Utils}
-  alias DataSearcher.Validator
+  alias DataSearcher.{Repo, Utils, Printer}
 
   @main_menu_msg """
   Main menu
@@ -20,7 +19,7 @@ defmodule Console do
     |> process_term()
     |> get_value_input()
     |> Repo.search()
-    |> IO.inspect()
+    |> Printer.print_users()
 
     run() # Make run function repeats
   end
@@ -32,7 +31,7 @@ defmodule Console do
   defp get_term_input(menu) do
     term =
       menu
-      |> Atom.to_string()
+      |> to_string()
       |> Kernel.<>(@term_search_msg)
       |> Utils.get_input_with()
 
@@ -46,7 +45,7 @@ defmodule Console do
   end
 
   defp process_menu("4") do
-    Repo.list_available_fields()
+    Repo.get_available_fields() |> Printer.print_available_fields()
 
     redo_process_menu()
   end
@@ -64,7 +63,7 @@ defmodule Console do
   defp process_term("quit"), do: System.halt()
 
   defp process_term({menu, term}) do
-    case Validator.valid_term?(menu, term) do
+    case Repo.valid_term?(menu, term) do
       true -> {menu, term}
       false -> redo_process_term({menu, term})
     end
@@ -75,7 +74,7 @@ defmodule Console do
   end
 
   defp redo_process_term({menu, _term}) do
-    Utils.print("the term you input does not exist for " <> (menu |> Atom.to_string()))
+    Utils.print("the term you input does not exist for " <> to_string(menu))
 
     get_term_input(menu) |> process_term()
   end
