@@ -40,17 +40,23 @@ defmodule DataSearcher.Formatter do
   end
 
   defp organization_printable_format(map) do
-    "Organization: " <> (map["organization"] |> hd() |> Map.get("name"))
+    with true <- exists?("Organization", map["organization"]) do
+      "Organization: " <> (map["organization"] |> hd() |> Map.get("name"))
+    end
   end
 
   defp submitted_tickets_printable_format(user) do
-    "Submitted Tickets:\n" <>
-      (user["submitted_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    with true <- exists?("Submitted Tickets", user["submitted_tickets"]) do
+      "Submitted Tickets:\n" <>
+        (user["submitted_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    end
   end
 
   defp assigned_tickets_printable_format(user) do
-    "Assigned Tickets:\n" <>
-      (user["assigned_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    with true <- exists?("Assigned Tickets", user["assigned_tickets"]) do
+      "Assigned Tickets:\n" <>
+        (user["assigned_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    end
   end
 
   defp user_self_printable_format(user) do
@@ -77,13 +83,17 @@ defmodule DataSearcher.Formatter do
   end
 
   defp users_printable_format(organization) do
-    "Users:\n" <>
-      (organization["users"] |> Enum.map_join("\n", &Utils.indent_str(&1["name"], 4)))
+    with true <- exists?("Users", organization["users"]) do
+      "Users:\n" <>
+        (organization["users"] |> Enum.map_join("\n", &Utils.indent_str(&1["name"], 4)))
+    end
   end
 
   defp tickets_printable_format(organization) do
-    "Tickets:\n" <>
-      (organization["tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    with true <- exists?("Tickets", organization["tickets"]) do
+      "Tickets:\n" <>
+        (organization["tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
+    end
   end
 
   defp organization_self_printable_format(organization) do
@@ -111,11 +121,15 @@ defmodule DataSearcher.Formatter do
   end
 
   defp submit_users_printable_format(ticket) do
-    "Submitted By: " <> (ticket["submitter"] |> hd() |> Map.get("name"))
+    with true <- exists?("Submitted User", ticket["submitter"]) do
+      "Submitted By: " <> (ticket["submitter"] |> hd() |> Map.get("name"))
+    end
   end
 
   defp assigned_user_printable_format(ticket) do
-    "Assigned To: " <> (ticket["assignee"] |> hd() |> Map.get("name"))
+    with true <- exists?("Assigned users", ticket["assignee"]) do
+      "Assigned To: " <> (ticket["assignee"] |> hd() |> Map.get("name"))
+    end
   end
 
   defp ticket_self_printable_format(ticket) do
@@ -132,6 +146,9 @@ defmodule DataSearcher.Formatter do
 
   defp format_self_properties(field, value),
     do: String.pad_leading(field <> ": ", 30) <> to_string(value)
+
+  defp exists?(field, val) when is_nil(val), do: field <> " Not Found"
+  defp exists?(_field, _val), do: true
 
   defp format(fields) do
     fields
