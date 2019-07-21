@@ -2,7 +2,7 @@ defmodule Console do
   @moduledoc """
   Program main function
   """
-  alias DataSearcher.{Repo, Utils, Printer}
+  alias DataSearcher.{Repo, Utils, Formatter}
 
   @main_menu_msg """
   Main menu
@@ -22,7 +22,8 @@ defmodule Console do
     |> process_term()
     |> get_value_input()
     |> Repo.search()
-    |> Printer.print()
+    |> Formatter.to_printable_format()
+    |> Utils.print()
 
     # Make run function repeats
     run()
@@ -49,7 +50,9 @@ defmodule Console do
   end
 
   defp process_menu("4") do
-    Repo.get_available_fields() |> Printer.print_available_fields()
+    Repo.get_available_fields()
+    |> Formatter.available_fields_printable_format()
+    |> Utils.print()
 
     redo_process_menu()
   end

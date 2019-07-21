@@ -1,32 +1,30 @@
-defmodule DataSearcher.Printer do
+defmodule DataSearcher.Formatter do
   @moduledoc """
   view layer, provide format functions and then print
   """
   alias DataSearcher.{Utils}
   alias DataSearcher.Repo.{User, Organization, Ticket}
 
-  def print_available_fields(fields_map) do
-    ("Search User With: \n" <>
+  def available_fields_printable_format(fields_map) do
+    "Search User With: \n" <>
        (fields_map.user |> format()) <>
        Utils.split_line() <>
        "\nSearch Ticket With: \n" <>
        (fields_map.ticket |> format()) <>
        Utils.split_line() <>
        "\nSearch Organization with: \n" <>
-       (fields_map.organization |> format()) <> Utils.split_line())
-    |> Utils.print()
+       (fields_map.organization |> format()) <> Utils.split_line()
   end
 
-  def print({_, []}), do: Utils.print("No result was found, Please search again\n")
-  def print({:user, users}), do: print_users(users)
-  def print({:ticket, tickets}), do: print_tickets(tickets)
-  def print({:organization, organizations}), do: print_organizations(organizations)
+  def to_printable_format({_, []}), do: "No result was found, Please search again\n"
+  def to_printable_format({:user, users}), do: to_user_printable_format(users)
+  def to_printable_format({:ticket, tickets}), do: to_ticket_printable_format(tickets)
+  def to_printable_format({:organization, organizations}), do: to_organization_printable_format(organizations)
 
-  def print_users(users) do
+  defp to_user_printable_format(users) do
     users
     |> Enum.map(&format_user(&1))
     |> Enum.join()
-    |> Utils.print()
   end
 
   defp format_user(user) do
@@ -46,12 +44,12 @@ defmodule DataSearcher.Printer do
   end
 
   defp submitted_tickets_printable_format(user) do
-    "Submitted Tickets: \n" <>
+    "Submitted Tickets:\n" <>
       (user["submitted_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
   end
 
   defp assigned_tickets_printable_format(user) do
-    "Assigned Tickets: \n" <>
+    "Assigned Tickets:\n" <>
       (user["assigned_tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
   end
 
@@ -61,11 +59,10 @@ defmodule DataSearcher.Printer do
     |> Enum.map_join("\n", fn {field, value} -> format_self_properties(field, value) end)
   end
 
-  def print_organizations(organizations) do
+  defp to_organization_printable_format(organizations) do
     organizations
     |> Enum.map(&format_organization(&1))
     |> Enum.join()
-    |> Utils.print()
   end
 
   defp format_organization(organization) do
@@ -80,12 +77,12 @@ defmodule DataSearcher.Printer do
   end
 
   defp users_printable_format(organization) do
-    "Users: \n" <>
+    "Users:\n" <>
       (organization["users"] |> Enum.map_join("\n", &Utils.indent_str(&1["name"], 4)))
   end
 
   defp tickets_printable_format(organization) do
-    "Tickets: \n" <>
+    "Tickets:\n" <>
       (organization["tickets"] |> Enum.map_join("\n", &Utils.indent_str(&1["subject"], 4)))
   end
 
@@ -95,11 +92,10 @@ defmodule DataSearcher.Printer do
     |> Enum.map_join("\n", fn {field, value} -> format_self_properties(field, value) end)
   end
 
-  def print_tickets(tickets) do
+  defp to_ticket_printable_format(tickets) do
     tickets
     |> Enum.map(&format_ticket(&1))
     |> Enum.join()
-    |> Utils.print()
   end
 
   defp format_ticket(ticket) do
