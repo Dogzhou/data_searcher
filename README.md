@@ -1,21 +1,60 @@
-# DataSearcher
+Data Searcher
+==============
 
-**TODO: Add description**
+## Assumptions
+* JSON data is not big enough to be loaded in stream way
+* No need to worry about memory usage stuff
 
-## Installation
+### Custodian
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `data_searcher` to your list of dependencies in `mix.exs`:
+Edward Zhou(edwardzhou1990@gmail.com)
 
-```elixir
-def deps do
-  [
-    {:data_searcher, "~> 0.1.0"}
-  ]
-end
+### Envrionment
+Elixir 1.18.1 or Docker
+
+### Install
+
+if Elixir 1.18.1 has been installed on your local
+
+```shell
+$ mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/data_searcher](https://hexdocs.pm/data_searcher).
+if not please use docker
 
+``` shell
+$ docker build -t data_searcher .
+```
+
+## Usage
+
+open iex on local or in docker
+
+``` shell
+$ iex -S mix
+```
+
+or
+
+``` shell
+$ docker run -ti data_searcher iex -S mix
+```
+
+### The rule of searching(Important)
+1. for timestamp type field(created_at/due_at), please use date(YYYY-MM-DD) to search
+2. for array type field(tags, domain_names), please use any single value
+3. case sensitive for others(sorry I will add it later)
+
+Instruction is given when application is up, it's pretty straightforward to use.
+
+### Development
+
+#### Testing
+``` shell
+$ mix test
+```
+
+#### Style check
+``` shell
+$ mix credo
+```
