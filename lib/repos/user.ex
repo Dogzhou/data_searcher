@@ -25,7 +25,7 @@ defmodule DataSearcher.Repo.User do
   def find_by(term, value) when term in @timestamp_type_fields,
     do: all() |> Enum.filter(&(Utils.get_date(&1[term]) == value))
 
-  def find_by(_term, value), do: all() |> Enum.filter(&(to_string(&1) == value))
+  def find_by(term, value), do: all() |> Enum.filter(&(to_string(&1[term]) == value))
 
   def resolve_associated_resources([]), do: []
   def resolve_associated_resources(nil), do: []

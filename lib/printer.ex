@@ -18,9 +18,9 @@ defmodule DataSearcher.Printer do
   end
 
   def print({_, []}), do: Utils.print("No result was found, Please search again\n")
-  def print({:User, users}), do: print_users(users)
-  def print({:Ticket, tickets}), do: print_tickets(tickets)
-  def print({:Organization, organizations}), do: print_organizations(organizations)
+  def print({:user, users}), do: print_users(users)
+  def print({:ticket, tickets}), do: print_tickets(tickets)
+  def print({:organization, organizations}), do: print_organizations(organizations)
 
   def print_users(users) do
     users
@@ -127,6 +127,8 @@ defmodule DataSearcher.Printer do
     |> Map.drop(Map.keys(ticket) -- Ticket.fields())
     |> Enum.map_join("\n", fn {field, value} -> format_self_properties(field, value) end)
   end
+
+  defp format_self_properties(_field, []), do: "[]"
 
   defp format_self_properties(field, value) when is_list(value) do
     String.pad_leading(field <> ": ", 30) <> Utils.wrap_str(value |> Enum.join(", "), "[]")

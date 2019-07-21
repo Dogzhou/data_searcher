@@ -13,7 +13,7 @@ defmodule Console do
    Enter a selection by number, or "quit" to quit:
   """
   @term_search_msg " field to search (press enter to list available fields): "
-  @menu_map %{"1" => "User", "2" => "Ticket", "3" => "Organization", "4" => "ListValidFields"}
+  @menu_map %{"1" => "user", "2" => "ticket", "3" => "organization", "4" => "listValidFields"}
 
   def run do
     get_menu_selection()

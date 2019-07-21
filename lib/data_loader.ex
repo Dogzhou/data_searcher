@@ -3,22 +3,22 @@ defmodule DataSearcher.DataLoader do
   load data from json files
   """
 
-  def load_orgnizations do
-    with {:ok, body} <- File.read("lib/data/organizations.json"),
+  def load_organizations(path \\ "lib/data/organizations.json") do
+    with {:ok, body} <- File.read(path),
          {:ok, organizations} <- Poison.decode(body) do
       Agent.start_link(fn -> organizations end, name: :organizations)
     end
   end
 
-  def load_users do
-    with {:ok, body} <- File.read("lib/data/users.json"),
+  def load_users(path \\ "lib/data/users.json") do
+    with {:ok, body} <- File.read(path),
          {:ok, users} <- Poison.decode(body) do
       Agent.start_link(fn -> users end, name: :users)
     end
   end
 
-  def load_tickets do
-    with {:ok, body} <- File.read("lib/data/tickets.json"),
+  def load_tickets(path \\ "lib/data/tickets.json") do
+    with {:ok, body} <- File.read(path),
          {:ok, tickets} <- Poison.decode(body) do
       Agent.start_link(fn -> tickets end, name: :tickets)
     end

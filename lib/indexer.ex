@@ -4,9 +4,9 @@ defmodule DataSearcher.Indexer do
   """
 
   @index_fields_map %{
-    "user" => ~w(_id name organization_id),
-    "ticket" => ~w(_id submitter_id assignee_id organization_id),
-    "organization" => ~w(_id external_id)
+    user: ~w(_id name organization_id),
+    ticket: ~w(_id submitter_id assignee_id organization_id),
+    organization: ~w(_id external_id)
   }
 
   alias DataSearcher.Repo
@@ -39,7 +39,7 @@ defmodule DataSearcher.Indexer do
           Map.update(acc, "#{entity[indexed_field]}", [entity], &(&1 ++ [entity]))
         end)
 
-      index_name = String.to_atom(indexed_field <> "_" <> entity_name)
+      index_name = String.to_atom(indexed_field <> "_" <> to_string(entity_name))
 
       Agent.start_link(fn -> indexed_data end, name: index_name)
     end)
