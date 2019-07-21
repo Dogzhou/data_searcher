@@ -31,4 +31,8 @@ defmodule UtilsTest do
   test ".get_date" do
     assert Utils.get_date("2019-07-22T01:00:00 +10") == "2019-07-22"
   end
+
+  test ".to_downcase_str" do
+    assert Utils.to_downcase_str(true) == "true"
+  end
 end

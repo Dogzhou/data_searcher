@@ -3,10 +3,7 @@ defmodule RepoTest do
   alias DataSearcher.{DataLoader, Repo, Indexer}
 
   setup_all do
-    DataLoader.load_organizations()
-    DataLoader.load_users()
-    DataLoader.load_tickets()
-    Indexer.create_index()
+    load_data_and_create_index()
 
     :ok
   end
@@ -58,7 +55,7 @@ defmodule RepoTest do
     end
 
     test "users by string field(role)" do
-      {:user, search_result} = Repo.search({:user, "role", "admin"})
+      {:user, search_result} = Repo.search({:user, "role", "Admin"})
       first_user = search_result |> List.first()
       last_user = search_result |> List.last()
 
@@ -180,5 +177,12 @@ defmodule RepoTest do
     }
 
     assert Repo.get_available_fields() == fields_map
+  end
+
+  defp load_data_and_create_index do
+    DataLoader.load_organizations("test/fixtures/organizations.json")
+    DataLoader.load_users("test/fixtures/users.json")
+    DataLoader.load_tickets("test/fixtures/tickets.json")
+    Indexer.create_index()
   end
 end

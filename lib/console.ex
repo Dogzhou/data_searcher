@@ -5,14 +5,14 @@ defmodule Console do
   alias DataSearcher.{Repo, Utils, Formatter}
 
   @main_menu_msg """
-  Main menu
+  Hi, what you want to do
    1) Search Users
    2) Search Tickets
    3) Search Organizations
-   4) List Available Fields
+   4) List All Available Fields
    Enter a selection by number, or "quit" to quit:
   """
-  @term_search_msg " field to search (press enter to list available fields): "
+  @term_search_msg " field to search: "
   @menu_map %{"1" => "user", "2" => "ticket", "3" => "organization", "4" => "listValidFields"}
 
   def run do

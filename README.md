@@ -70,7 +70,7 @@ $ mix credo
 ### Last
 Sorry this is not a result of TDD, I didn't have 100% confidence of my solution and Elixir is still new to me, it was like "let me try if this make sense" everywhere during development;
 
-only core search function and format function was tested(many test cases missing), and I personally don't quite like the test strategy, ***Property Based Testing*** would make more sense but couldn't introduce it before deadline.
+only core search function and format function was tested(many sad path test cases missing), ***Property Based Testing*** would make more sense but couldn't introduce it before deadline.
 
 after done this project I love Elixir more.
 
@@ -78,3 +78,5 @@ after done this project I love Elixir more.
 * More unit test
 * Continue refactoring, remove duplicate code as necessary, extract reusable component
 * Add results count in the search result
+* Add more interactive commands
+* Add logs(maybe?)

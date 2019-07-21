@@ -28,4 +28,10 @@ defmodule DataSearcher.Utils do
     |> String.split("T")
     |> hd()
   end
+
+  def to_downcase_str(str) do
+    str
+    |> to_string()
+    |> String.downcase()
+  end
 end

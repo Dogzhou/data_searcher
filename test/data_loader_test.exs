@@ -1,2 +1,0 @@
-defmodule DataLoaderTest do
-end
