@@ -17,7 +17,7 @@ defmodule Console do
 
   def run do
     get_menu_selection()
-    |> process_menu()
+    |> process_menu_selection()
     |> get_term_input()
     |> process_term()
     |> get_value_input()
@@ -49,7 +49,7 @@ defmodule Console do
     {menu, term, value}
   end
 
-  defp process_menu("4") do
+  defp process_menu_selection("4") do
     Repo.get_available_fields()
     |> Formatter.available_fields_printable_format()
     |> Utils.print()
@@ -57,12 +57,11 @@ defmodule Console do
     redo_process_menu()
   end
 
-  defp process_menu("quit"), do: System.halt()
-
-  defp process_menu(menu_index) when menu_index in ~w(1 2 3 4),
+  defp process_menu_selection("quit"), do: System.halt()
+  defp process_menu_selection(menu_index) when menu_index in ~w(1 2 3 4),
     do: @menu_map |> Map.get(menu_index) |> String.to_atom()
 
-  defp process_menu(_) do
+  defp process_menu_selection(_) do
     Utils.print("Invalid selection, please input again")
 
     redo_process_menu()
@@ -78,7 +77,7 @@ defmodule Console do
   end
 
   defp redo_process_menu do
-    get_menu_selection() |> process_menu()
+    get_menu_selection() |> process_menu_selection()
   end
 
   defp redo_process_term({menu, _term}) do
