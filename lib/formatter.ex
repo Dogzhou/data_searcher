@@ -23,7 +23,7 @@ defmodule DataSearcher.Formatter do
 
   defp to_user_printable_format(users) do
     users
-    |> Enum.map(&format_user(&1))
+    |> Enum.map(&format_user/1)
     |> Enum.join()
   end
 
@@ -67,7 +67,7 @@ defmodule DataSearcher.Formatter do
 
   defp to_organization_printable_format(organizations) do
     organizations
-    |> Enum.map(&format_organization(&1))
+    |> Enum.map(&format_organization/1)
     |> Enum.join()
   end
 
@@ -104,7 +104,7 @@ defmodule DataSearcher.Formatter do
 
   defp to_ticket_printable_format(tickets) do
     tickets
-    |> Enum.map(&format_ticket(&1))
+    |> Enum.map(&format_ticket/1)
     |> Enum.join()
   end
 
